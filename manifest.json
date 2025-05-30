@@ -11,7 +11,7 @@
                 "src/content.jsx"
             ],
             "matches": [
-                "*"
+                "<all_urls>"
             ]
         }
     ]

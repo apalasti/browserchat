@@ -16,10 +16,19 @@ function App() {
             if (selection && selection.rangeCount > 0) {
                 const range = selection.getRangeAt(0);
                 const rects = range.getClientRects();
-                const rect = rects.item(rects.length - 1);
 
-                const top = (rect?.bottom || 0) + window.scrollY
-                const left = (rect?.left || 0) + window.scrollX
+                let leftmost = Infinity;
+                let downmost = -Infinity;
+                for (let i = 0; i < rects.length; i++) {
+                    const rect = rects.item(i);
+                    if (rect) {
+                        leftmost = Math.min(leftmost, rect.left);
+                        downmost = Math.max(downmost, rect.bottom);
+                    }
+                }
+                
+                const top = (downmost !== -Infinity ? downmost : 0) + window.scrollY;
+                const left = (leftmost !== Infinity ? leftmost : 0) + window.scrollX;
                 setSelection({
                     text: selection.toString().trim(),
                     position: { top, left }
