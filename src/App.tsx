@@ -44,15 +44,23 @@ function App() {
             }
         });
 
+        window.addEventListener('resize', selectionChangeListener);
         document.addEventListener('selectionchange', selectionChangeListener);
         return () => {
             document.removeEventListener('selectionchange', selectionChangeListener);
-            scrollableElements.forEach(element => { element.removeEventListener('scroll', selectionChangeListener) })
+            window.removeEventListener('resize', selectionChangeListener);
+            scrollableElements.forEach(element => {
+                element.removeEventListener('scroll', selectionChangeListener);
+            });
         };
     }, []);
 
     const onClick = () => {
-        console.log(selection);
+        // Send a message to the background script
+        chrome.runtime.sendMessage({
+            action: "addToChat",
+            data: selection.text
+        });
     }
 
     return (

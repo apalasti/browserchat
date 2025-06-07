@@ -5,6 +5,16 @@
     "action": {
         "default_popup": "index.html"
     },
+    "background": {
+        "service_worker": "src/background.ts",
+        "type": "module"
+    },
+    "side_panel": {
+        "default_path": "sidepanel.html"
+    },
+    "permissions": [
+        "sidePanel"
+    ],
     "content_scripts": [
         {
             "js": [
