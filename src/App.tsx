@@ -9,7 +9,6 @@ function App() {
     const [selection, setSelection] = useState<Selection>({
         text: "", position: null
     });
-
     useEffect(() => {
         const selectionChangeListener = (_: Event) => {
             const selection = document.getSelection();
@@ -53,22 +52,22 @@ function App() {
     }, []);
 
     const onClick = () => {
-        console.log(selection)
+        console.log(selection);
     }
 
     return (
         <>
             {selection.text && selection.position && (
                 <button
+                    className='absolute z-9999 px-2 py-1 rounded-md bg-white dark:bg-gray-800 text-sm shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer'
                     style={{
-                        position: 'absolute',
                         top: `${selection.position.top}px`,
                         left: `${selection.position.left}px`,
-                        zIndex: 9999,
+                        transform: 'translateY(4px)',
                     }}
                     onClick={onClick}
                 >
-                    ""
+                    Add to Chat
                 </button>
             )}
         </>
