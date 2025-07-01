@@ -25,17 +25,25 @@ function Sidepanel() {
 		setMessages(newUserMessages);
 
 		try {
-			const completion = await client.chat.completions.create({
-				model: MODEL, messages: newUserMessages as any,
+			// Initialize an empty message for the assistant to stream into
+			let responseMessage = '';
+			setMessages(msgs => [...msgs, {role: 'assistant', content: responseMessage}]);
+
+			const stream = await client.chat.completions.create({
+				model: MODEL, messages: newUserMessages as any, stream: true,
 			});
 
-			const assistantMessage = completion.choices[0].message;
-			if (assistantMessage) {
-				const newMessagesWithAssistant = [
-					...newUserMessages,
-					{ role: assistantMessage.role, content: String(assistantMessage.content) }
-				];
-				setMessages(newMessagesWithAssistant);
+			for await (const chunk of stream) {
+				const chunkContent = chunk.choices[0]?.delta?.content || '';
+				responseMessage += chunkContent;
+				setMessages(prevMessages => {
+					const updatedMessages = [...prevMessages];
+					updatedMessages[updatedMessages.length - 1] = {
+						role: 'assistant',
+						content: responseMessage,
+					};
+					return updatedMessages;
+				});
 			}
 		} catch (error) {
 			console.error('Error calling OpenAI API:', error);
