@@ -13,12 +13,13 @@
         "default_path": "sidepanel.html"
     },
     "permissions": [
-        "sidePanel"
+        "sidePanel",
+        "activeTab"
     ],
     "content_scripts": [
         {
             "js": [
-                "src/content.jsx"
+                "src/ContentScript.tsx"
             ],
             "matches": [
                 "<all_urls>"

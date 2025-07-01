@@ -1,11 +1,45 @@
+import React from 'react'
+import ReactDOM from 'react-dom/client'
 import { useState, useEffect } from 'react'
+
 
 interface Selection {
     text: string;
     position: { top: number; left: number } | null;
 }
 
-function App() {
+const styleTag = document.createElement('style');
+styleTag.textContent = `
+    #browserchat-add-to-chat-button:hover {
+        background-color: #f9fafb !important; /* hover:bg-gray-50 */
+    }
+
+    @media (prefers-color-scheme: dark) {
+        #browserchat-add-to-chat-button {
+            background-color: #1f2937 !important; /* dark:bg-gray-800 */
+            border-color: #374151 !important; /* dark:border-gray-700 */
+            color: white;
+        }
+
+        #browserchat-add-to-chat-button:hover {
+            background-color: #374151 !important; /* dark:hover:bg-gray-700 */
+        }
+    }
+`;
+document.head.appendChild(styleTag);
+
+const root = document.createElement('div');
+root.id = 'browserchat-root';
+document.body.appendChild(root);
+
+const rootElement = ReactDOM.createRoot(root);
+rootElement.render(
+  <React.StrictMode>
+    <ContentScript />
+  </React.StrictMode>,
+);
+
+function ContentScript() {
     const [selection, setSelection] = useState<Selection>({
         text: "", position: null
     });
@@ -59,7 +93,7 @@ function App() {
         // Send a message to the background script
         chrome.runtime.sendMessage({
             action: "addToChat",
-            data: selection.text
+            data: selection.text.trim()
         });
     }
 
@@ -67,11 +101,25 @@ function App() {
         <>
             {selection.text && selection.position && (
                 <button
-                    className='absolute z-9999 px-2 py-1 rounded-md bg-white dark:bg-gray-800 text-sm shadow-sm border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer'
+                    id="browserchat-add-to-chat-button"
                     style={{
+                        position: 'absolute',
+                        zIndex: 9999,
+                        paddingLeft: '0.5rem',
+                        paddingRight: '0.5rem',
+                        paddingTop: '0.25rem',
+                        paddingBottom: '0.25rem',
+                        borderRadius: '0.375rem',
+                        backgroundColor: '#ffffff',
+                        fontSize: '0.875rem',
+                        boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                        border: '1px solid #e5e7eb',
+                        cursor: 'pointer',
+                        userSelect: 'none',
                         top: `${selection.position.top}px`,
                         left: `${selection.position.left}px`,
                         transform: 'translateY(4px)',
+                        outline: 'none',
                     }}
                     onClick={onClick}
                 >
@@ -81,5 +129,3 @@ function App() {
         </>
     );
 }
-
-export default App
