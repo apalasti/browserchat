@@ -2,6 +2,7 @@ import { StrictMode, useCallback, useMemo, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import OpenAI from 'openai';
 import ChatInput from './ChatInput';
+import { SYSTEM_PROMPT, createUserPrompt } from './prompts';
 
 import './styles.css'
 
@@ -17,11 +18,11 @@ function Sidepanel() {
 	}), []);
 
 	const [messages, setMessages] = useState([
-		{ role: 'user', content: "You are a helpful assistant." },
+		{ role: 'user', content: SYSTEM_PROMPT },
 	]);
 
 	const onSubmit = useCallback(async ({ context, input }: { context: string; input: string }) => {
-		const newUserMessages = [...messages, { role: 'user', content: input }];
+		const newUserMessages = [...messages, { role: 'user', content: createUserPrompt(context, input) }];
 		setMessages(newUserMessages);
 
 		try {
