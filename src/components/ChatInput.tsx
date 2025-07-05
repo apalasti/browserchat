@@ -49,7 +49,7 @@ function ChatInput({ onSubmit }: ChatInputProps) {
                     onClick={() => setChatState({ ...chatState, context: "" })}
                     aria-label='Remove context'
                 >
-                    X
+                    ✕
                 </button>
             </div>
         )}
