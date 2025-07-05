@@ -2,11 +2,7 @@ import OpenAI from "openai";
 import { useCallback, useMemo, useState } from "react";
 import { createUserPrompt, SYSTEM_PROMPT } from "../prompts";
 import ChatInput from "./ChatInput";
-
-
-const API_KEY = "AIzaSyCDfWHl1UvlDn0alrZmtNbxNtsOk4Tjbyk";
-const BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/";
-const MODEL = "gemma-3-27b-it";
+import { useModels } from "../ModelsContext";
 
 
 interface ChatPanelProps {
@@ -14,27 +10,29 @@ interface ChatPanelProps {
 }
 
 function ChatView({ onSettingsClick }: ChatPanelProps) {
+	const models = useModels()
 	const client = useMemo(() => new OpenAI({
-		baseURL: BASE_URL,
-		apiKey: API_KEY,
 		dangerouslyAllowBrowser: true,
+		apiKey: "",
 	}), []);
 
 	const [messages, setMessages] = useState([
 		{ role: 'user', content: SYSTEM_PROMPT },
 	]);
 
-	const onSubmit = useCallback(async ({ context, input }: { context: string; input: string }) => {
+	const onSubmit = useCallback(async({ model, context, input }: { model: string; context: string; input: string }) => {
+		const selectedModel = models.find((m) => m.name == model)!;
 		const newUserMessages = [...messages, { role: 'user', content: createUserPrompt(context, input) }];
 		setMessages(newUserMessages);
 
 		try {
-			// Initialize an empty message for the assistant to stream into
 			let responseMessage = '';
 			setMessages(msgs => [...msgs, {role: 'assistant', content: responseMessage}]);
 
+			client.apiKey = selectedModel.apiKey;
+			client.baseURL = selectedModel.baseURL;
 			const stream = await client.chat.completions.create({
-				model: MODEL, messages: newUserMessages as any, stream: true,
+				model: selectedModel.name, messages: newUserMessages as any, stream: true,
 			});
 
 			for await (const chunk of stream) {
@@ -69,15 +67,17 @@ function ChatView({ onSettingsClick }: ChatPanelProps) {
 					Settings
 				</button>
 			</div>
-			<div className='h-full overflow-y-auto pb-4'>
-				{messages.slice(1).map((msg, index) => (
-					<div key={index} className={`mb-2 p-2 rounded-lg ${msg.role === 'user' ? 'bg-blue-500 text-white self-end ml-auto' : 'bg-gray-200 text-gray-800 self-start mr-auto'}`}>
-						<p className="font-semibold">{msg.role === 'user' ? 'You' : 'AI'}:</p>
-						<p>{msg.content}</p>
-					</div>
-				))}
+			<div className="h-full flex flex-col p-2">
+				<div className="flex-1 overflow-y-auto">
+					{messages.slice(1).map((msg, index) => (
+						<div key={index} className={`mb-2 p-2 rounded-lg max-w-[80%] ${msg.role === 'user' ? 'bg-blue-500 text-white ml-auto' : 'bg-gray-200 text-gray-800 mr-auto'}`}>
+							<p className="font-semibold">{msg.role === 'user' ? 'You' : 'AI'}:</p>
+							<p>{msg.content}</p>
+						</div>
+					))}
+				</div>
+				<ChatInput onSubmit={onSubmit} />
 			</div>
-			<ChatInput onSubmit={onSubmit} />
 		</>
 	);
 }

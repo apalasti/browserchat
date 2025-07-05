@@ -10,6 +10,11 @@ interface Selection {
 
 const styleTag = document.createElement('style');
 styleTag.textContent = `
+    #browserchat-add-to-chat-button {
+        color: black;
+        background-color: #ffffff;
+    }
+
     #browserchat-add-to-chat-button:hover {
         background-color: #f9fafb !important; /* hover:bg-gray-50 */
     }
@@ -107,15 +112,17 @@ function ContentScript() {
                         zIndex: 9999,
                         paddingLeft: '0.5rem',
                         paddingRight: '0.5rem',
-                        paddingTop: '0.25rem',
-                        paddingBottom: '0.25rem',
+                        paddingTop: '0.35rem',
+                        paddingBottom: '0.35rem',
                         borderRadius: '0.375rem',
-                        backgroundColor: '#ffffff',
                         fontSize: '0.875rem',
+                        fontWeight: '500',
+                        fontFamily: 'ui-sans-serif, system-ui, sans-serif',
                         boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
                         border: '1px solid #e5e7eb',
                         cursor: 'pointer',
                         userSelect: 'none',
+                        lineHeight: 'normal',
                         top: `${selection.position.top}px`,
                         left: `${selection.position.left}px`,
                         transform: 'translateY(4px)',
