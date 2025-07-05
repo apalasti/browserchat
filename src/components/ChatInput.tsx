@@ -74,7 +74,6 @@ function ChatInput({ onSubmit }: ChatInputProps) {
                             submit(e);
                         }
                     }}
-                    disabled={chatState.isLoading}
                     rows={1}
                     style={{ minHeight: '2.5rem', maxHeight: '12rem' }}
                 />

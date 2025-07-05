@@ -13,7 +13,7 @@ function SidePanel() {
 	
 	return (
 		<ModelsContextProvider>
-			<div className='flex flex-col h-screen bg-gray-50 dark:bg-gray-900'>
+			<div className='flex flex-col h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden'>
 				{activeView === "chat" && <ChatView onSettingsClick={() => setActiveView("settings")} />}
 				{activeView === "settings" && <SettingsView onExitClick={() => setActiveView("chat")} />}
 			</div>

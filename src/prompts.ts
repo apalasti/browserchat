@@ -9,7 +9,7 @@ export const SYSTEM_PROMPT = (
 export const createUserPrompt = (context: string, input: string): string => {
     context = context.trim();
     if (context) {
-        return `<context>\n${context}\n</context>\n${input}`;
+        return `<context>\n${context}\n</context>\n\n${input}`;
     }
     return input;
 };

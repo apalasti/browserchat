@@ -3,6 +3,8 @@ import { useCallback, useMemo, useState } from "react";
 import { createUserPrompt, SYSTEM_PROMPT } from "../prompts";
 import ChatInput from "./ChatInput";
 import { useModels } from "../ModelsContext";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 
 interface ChatPanelProps {
@@ -67,16 +69,25 @@ function ChatView({ onSettingsClick }: ChatPanelProps) {
 					Settings
 				</button>
 			</div>
-			<div className="h-full flex flex-col p-2">
-				<div className="flex-1 overflow-y-auto">
-					{messages.slice(1).map((msg, index) => (
-						<div key={index} className={`mb-2 p-2 rounded-lg max-w-[80%] ${msg.role === 'user' ? 'bg-blue-500 text-white ml-auto' : 'bg-gray-200 text-gray-800 mr-auto'}`}>
-							<p className="font-semibold">{msg.role === 'user' ? 'You' : 'AI'}:</p>
-							<p>{msg.content}</p>
-						</div>
-					))}
+			<div className="h-full flex flex-col overflow-hidden">
+				<div className="flex-1 overflow-y-auto p-2 ">
+					{messages.slice(1).map((msg, index) => { 
+						let dynamicClasses = msg.role === "user" 
+							? "rounded-lg max-w-[80%] ml-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
+							: "";
+
+						return (
+							<div key={index} className={`text-base mb-4 p-2 ${dynamicClasses}`}>
+								<Markdown remarkPlugins={[remarkGfm]}>
+									{msg.content}
+								</Markdown>
+							</div>
+						);
+					})}
 				</div>
-				<ChatInput onSubmit={onSubmit} />
+				<div className="p-2">
+					<ChatInput onSubmit={onSubmit} />
+				</div>
 			</div>
 		</>
 	);
